@@ -25,7 +25,9 @@ passport.use(
     {
       clientID: keys.googleClientID,
       clientSecret: keys.googleClientSecret,
-      callbackURL: "/auth/google/callback"
+      callbackURL: "/auth/google/callback",
+      // this is a relative path that we are specifying, which makes life easier in development. GoogleStrategy is able to work some magic and pre-pend the rest of the path to the beginning. Sometimes this doesn't result in good behavior. For example, if we want http vs https pre-pended. The reason why in this case https isn't prepended is because we are routing our request through heroku's proxy, and by default when googlestrategy sees we're routing through a proxy, it automatically drops the https. However, we trust that heroku's proxy is secure, so we can config googlestrategy to ignore it, or we can explicity specify the path value of the callbackURL.
+      proxy: true
     },
     (accessToken, refreshToken, profile, done) => {
       // check if the user with a matching profile idea already exists in the model class. Finds the first record matching
@@ -48,4 +50,3 @@ passport.use(
 );
 
 module.exports = {};
-
